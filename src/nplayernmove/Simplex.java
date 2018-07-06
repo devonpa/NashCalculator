@@ -1,6 +1,12 @@
 package nplayernmove;
 
+import java.util.List;
+
 public interface Simplex {
-    //calculates the barymetric subdivision
-    Simplex BSD();
+
+    Simplex subdivide();
+
+    double[] getCentroid();
+
+    List<double[]> getFullyLabeled();
 }

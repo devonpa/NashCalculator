@@ -9,6 +9,11 @@ import java.util.Arrays;
  */
 public class MathFunctions {
 
+    public static int labelPoint(final double[] point, final PayoffMatrix payoffMatrix) {
+        //todo
+        return -1;
+    }
+
     public static double expectedPayoff(final double[][] strategies, final PayoffMatrix payoffMatrix){
         double expectedPayoff = 0;
 

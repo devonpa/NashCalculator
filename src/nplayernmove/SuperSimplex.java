@@ -1,6 +1,8 @@
 package nplayernmove;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by devonallison on 7/1/18.
@@ -13,7 +15,22 @@ public class SuperSimplex implements Simplex{
         this.simplexes = simplexes;
     }
 
-    public Simplex BSD() {
-        return new SuperSimplex(Arrays.stream(simplexes).map(Simplex::BSD).toArray(Simplex[]::new));
+    @Override
+    public Simplex subdivide() {
+        return new SuperSimplex(Arrays.stream(simplexes).map(Simplex::subdivide).toArray(Simplex[]::new));
+    }
+
+    @Override
+    public double[] getCentroid() {
+        //todo is this right
+        //return simplexes[0].getCentroid();
+        throw new IllegalStateException("Can't find centroid of supersimplex");
+    }
+
+    @Override
+    public List<double[]> getFullyLabeled() {
+        final List<double[]> ret = new ArrayList<>();
+        Arrays.stream(simplexes).forEach(s -> ret.addAll(s.getFullyLabeled()));
+        return ret;
     }
 }
