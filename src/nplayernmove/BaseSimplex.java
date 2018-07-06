@@ -66,20 +66,44 @@ public class BaseSimplex implements Simplex{
         }
 
         final Simplex[] faces = makeFaces();
+
         //simplex i in faces will not have point i
-        final double[] newPoint = faces[0].getCentroid();
-        //todo create new points
-        final Simplex left = new BaseSimplex(payoffMatrix).subdivide(i - 1);
-        final Simplex right = new BaseSimplex(payoffMatrix).subdivide(i - 1);
+        final List<Object> centroidAndLine = faces[0].getCentroid();
+        final double[] newPointCoordinates = (double[]) centroidAndLine.get(0);
+        final CoordsAndLabel newCoordsAndLabel = new CoordsAndLabel(newPointCoordinates, MathFunctions.labelPoint(newPointCoordinates, payoffMatrix));
+        final CoordsAndLabel[] onLine = (CoordsAndLabel []) centroidAndLine.get(1);
+
+        //the points on the line are the "split", one goes on each side
+        final CoordsAndLabel[] newCoords = new CoordsAndLabel[points.length];
+        int j = 0;
+        for(final CoordsAndLabel coordsAndLabel : points) {
+            //todo probably just need ==
+            if(!coordsAndLabel.equals(onLine[0]) && !coordsAndLabel.equals(onLine[1])) {
+                newCoords[j++] = coordsAndLabel;
+            }
+        }
+
+        newCoords[j] = newCoordsAndLabel;
+        newCoords[newCoords.length - 1] = onLine[0];
+        final Simplex left = new BaseSimplex(payoffMatrix, newCoords).subdivide(i - 1);
+
+        final CoordsAndLabel[] coordsAndLabelsRight = new CoordsAndLabel[newCoords.length];
+        System.arraycopy(newCoords, 0, coordsAndLabelsRight, 0, newCoords.length - 1);
+        coordsAndLabelsRight[newCoords.length - 1] = onLine[1];
+        final Simplex right = new BaseSimplex(payoffMatrix, coordsAndLabelsRight).subdivide(i - 1);
+
         return new SuperSimplex(left, right);
     }
 
     public Simplex subdivideBaseCase() {
-        final double[] newPoint = getCentroid();
+        final List<Object> centroidAndLine = getCentroid();
+        final double[] newPoint = (double[]) centroidAndLine.get(0);
+        final CoordsAndLabel[] onLine = (CoordsAndLabel[]) centroidAndLine.get(1);
+
         final CoordsAndLabel newCoordsAndLabel = new CoordsAndLabel(newPoint, MathFunctions.labelPoint(newPoint, payoffMatrix));
 
-        return new SuperSimplex(new BaseSimplex(payoffMatrix, newCoordsAndLabel, points[0]),
-                new BaseSimplex(payoffMatrix, newCoordsAndLabel, points[1]));
+        return new SuperSimplex(new BaseSimplex(payoffMatrix, newCoordsAndLabel, onLine[0]),
+                new BaseSimplex(payoffMatrix, newCoordsAndLabel, onLine[1]));
     }
 
     public Simplex[] makeFaces() {
@@ -99,11 +123,13 @@ public class BaseSimplex implements Simplex{
         return faces;
     }
 
-    public double[] getCentroid() {
+    public List<Object> getCentroid() {
         if(points.length == 2) {
             final double[] coordinates0 = points[0].getCoordinates();
             final double[] coordinates1 = points[1].getCoordinates();
-            return new double[]{(coordinates0[0] + coordinates1[0]) / 2d, (coordinates0[1] + coordinates1[1]) / 2d};
+            final double[] newPointCoordinates = new double[]{(coordinates0[0] + coordinates1[0]) / 2d, (coordinates0[1] + coordinates1[1]) / 2d};
+            final CoordsAndLabel[] onLine = new CoordsAndLabel[]{points[0], points[1]};
+            return Arrays.asList(newPointCoordinates, onLine);
         }
 
         return makeFaces()[0].getCentroid();

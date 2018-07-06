@@ -21,10 +21,10 @@ public class SuperSimplex implements Simplex{
     }
 
     @Override
-    public double[] getCentroid() {
+    public List<Object> getCentroid() {
         //todo is this right
         //return simplexes[0].getCentroid();
-        throw new IllegalStateException("Can't find centroid of supersimplex");
+        throw new IllegalStateException("Can't find centroid of SuperSimplex");
     }
 
     @Override

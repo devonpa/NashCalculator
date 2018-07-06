@@ -6,7 +6,7 @@ public interface Simplex {
 
     Simplex subdivide();
 
-    double[] getCentroid();
+    List<Object> getCentroid();
 
     List<double[]> getFullyLabeled();
 }

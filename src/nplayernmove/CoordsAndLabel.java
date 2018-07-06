@@ -18,7 +18,7 @@ public class CoordsAndLabel {
     }
 
     public boolean equals(CoordsAndLabel other){
-        return (Arrays.equals(coordinates, other.getCoordinates()) && label == other.getLabel());
+        return this == other || (Arrays.equals(coordinates, other.getCoordinates()) && label == other.getLabel());
     }
 
     public int getLabel(){
