@@ -11,9 +11,38 @@ public class TestMathFunctions {
 
     public static void main(String[] args) {
         testExpectedPayoff();
-        testHInverse();
         testNashFxn();
-        testH();
+        testSimplotope();
+        testLabelPoints();
+    }
+
+    private static void testLabelPoints() {
+        final PayoffMatrix[] matrices = new PayoffMatrix[2];
+        final Map<int[], Integer> payoffsP1 = new HashMap<>();
+        payoffsP1.put(new int[]{0,0}, 3);
+        payoffsP1.put(new int[]{0,1}, 2);
+        payoffsP1.put(new int[]{1,0}, 2);
+        payoffsP1.put(new int[]{1,1}, 4);
+
+        final Map<int[], Integer> payoffsP2 = new HashMap<>();
+        payoffsP2.put(new int[]{0,0}, 2);
+        payoffsP2.put(new int[]{0,1}, 4);
+        payoffsP2.put(new int[]{1,0}, 3);
+        payoffsP2.put(new int[]{1,1}, -3);
+        matrices[0] = new PayoffMatrix(payoffsP1);
+        matrices[1] = new PayoffMatrix(payoffsP2);
+
+        final Simplotope simplotope = new Simplotope(new int[]{2, 2});
+
+        assertEquals(1, MathFunctions.labelPoint(new double[]{1,0,0}, simplotope, matrices));
+        assertEquals(2, MathFunctions.labelPoint(new double[]{0,1,0}, simplotope, matrices));
+        assertEquals(3, MathFunctions.labelPoint(new double[]{0,0,1}, simplotope, matrices));
+
+        assertEquals(2, MathFunctions.labelPoint(new double[]{0.5,0.5,0}, simplotope, matrices));
+        assertEquals(1, MathFunctions.labelPoint(new double[]{0.5,0,0.5}, simplotope, matrices));
+        assertEquals(3, MathFunctions.labelPoint(new double[]{0,0.5,0.5}, simplotope, matrices));
+
+        assertEquals(3, MathFunctions.labelPoint(new double[]{1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0}, simplotope, matrices));
     }
 
     private static void testExpectedPayoff() {
@@ -33,20 +62,6 @@ public class TestMathFunctions {
         //non-pure
         assertEquals(4.25, MathFunctions.expectedPayoff(new double[][]{new double[]{0.5,0.5}, new double[]{0.5,0.5}}, matrixP1));
         assertEquals(4.6875, MathFunctions.expectedPayoff(new double[][]{new double[]{0.25,0.75}, new double[]{0.75,0.25}}, matrixP1));
-    }
-
-    private static void testH() {
-        assertEquals(MathFunctions.h(new double[]{0.5, 0.75}), new double[]{0.3, 0.45, 0.25}, 1e-6);
-        assertEquals(MathFunctions.h(new double[]{0.5, 0, 1}), new double[]{1.0 / 3.0, 0, 2.0 / 3.0, 0}, 1e-7);
-    }
-
-    private static void testHInverse() {
-        //input must sum to 1
-        assertEquals(MathFunctions.hInverse(new double[]{0.5, 0, 0.5, 0}), new double[]{1, 0, 1});
-        assertEquals(MathFunctions.hInverse(new double[]{0.5, 0.5, 0}), new double[]{1, 1});
-        assertEquals(MathFunctions.hInverse(new double[]{0.25, 0.75, 0}), new double[]{1.0/3.0, 1});
-        assertEquals(MathFunctions.hInverse(new double[]{0, 1, 0}), new double[]{0, 1});
-        assertEquals(MathFunctions.hInverse(new double[]{0, 0.5, 0.5}), new double[]{0, 0.5});
     }
 
     private static void testNashFxn() {
@@ -124,6 +139,20 @@ public class TestMathFunctions {
 
         assertEquals(MathFunctions.nashFxn(new double[][]{new double[]{1,0}, new double[]{0,1}, new double[]{1,0}}, payoffMatrices_3),
                 new double[][]{new double[]{0.5,0.5}, new double[]{0,1}, new double[]{1,0}});
+    }
+
+    private static void testSimplotope() {
+        final Simplotope simplotope = new Simplotope(new int[]{2,2});
+        assertEquals(simplotope.fromSimplex(new double[]{0.5, 0.5, 0}), new double[][]{new double[]{1,0}, new double[]{1,0}});
+        assertEquals(simplotope.fromSimplex(new double[]{1.0, 0.0, 0.0}), new double[][]{new double[]{1,0}, new double[]{0,1}});
+        assertEquals(simplotope.fromSimplex(new double[]{0.0, 1.0, 0.0}), new double[][]{new double[]{0,1}, new double[]{1,0}});
+        assertEquals(simplotope.fromSimplex(new double[]{0.0, 0.0, 1.0}), new double[][]{new double[]{0,1}, new double[]{0,1}});
+    }
+
+    private static void assertEquals(int expected, int actual) {
+        if(expected != actual) {
+            throw new RuntimeException("Expected: " + expected + ", was " + actual);
+        }
     }
 
     private static void assertEquals(double expected, double actual) {

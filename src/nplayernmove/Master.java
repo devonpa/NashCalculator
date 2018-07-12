@@ -1,15 +1,30 @@
 package nplayernmove;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Master {
 
     public static void main(String[] args) {
-        final int iterations = 2;
+        final int iterations = 0;
 
         final PayoffMatrix[] matrices = new PayoffMatrix[2];
+        final Map<int[], Integer> payoffsP1 = new HashMap<>();
+        payoffsP1.put(new int[]{0,0}, 2);
+        payoffsP1.put(new int[]{0,1}, 3);
+        payoffsP1.put(new int[]{1,0}, 2);
+        payoffsP1.put(new int[]{1,1}, 1);
+
+        final Map<int[], Integer> payoffsP2 = new HashMap<>();
+        payoffsP2.put(new int[]{0,0}, 3);
+        payoffsP2.put(new int[]{0,1}, 5);
+        payoffsP2.put(new int[]{1,0}, 2);
+        payoffsP2.put(new int[]{1,1}, 3);
+        matrices[0] = new PayoffMatrix(payoffsP1);
+        matrices[1] = new PayoffMatrix(payoffsP2);
 
         final Simplotope simplotope = new Simplotope(new int[]{2, 2});
 

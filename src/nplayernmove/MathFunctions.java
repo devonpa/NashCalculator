@@ -15,7 +15,7 @@ public class MathFunctions {
         final double[] newPoint = strategySpace.fromSimplotope(nashResult);
         int i = 0;
         for(; i < point.length; i++) {
-            if(point[i] < newPoint[i]) {
+            if(newPoint[i] < point[i]) {
                 return i + 1;
             }
         }
@@ -23,14 +23,9 @@ public class MathFunctions {
         throw new NashFoundException(strategies);
     }
 
-    public static class NashFoundException extends RuntimeException {
-        private final double[][] strategies;
-        public NashFoundException(final double[][] strategies) {
-            this.strategies = strategies;
-        }
-
-        public double[][] getStrategies() {
-            return strategies;
+    private static class NashFoundException extends RuntimeException {
+        private NashFoundException(final double[][] strategies) {
+            super("Found Nash: " + Arrays.deepToString(strategies));
         }
     }
 
@@ -90,33 +85,6 @@ public class MathFunctions {
         return Math.max(0, expectedWithPureStrategy - expectedWithCurrentStrategy);
     }
 
-    public static double[] hInverse(final double[] coordinates){
-        final double[] embeddedCoordinates = new double[coordinates.length - 1];
-        System.arraycopy(coordinates, 0, embeddedCoordinates, 0, coordinates.length - 1);
-
-        return gInverse(embeddedCoordinates);
-    }
-
-    //radial projection from origin, through coordinate, to box
-    private static double[] gInverse(final double[] coordinates) {
-        final double t = t(coordinates);
-        final double sum = Arrays.stream(coordinates).sum();
-        final double t2 = sum == 0 ? 0 : 1.0 / sum;
-        final double stretchFactor = t / t2;
-
-        return Arrays.stream(coordinates).map(d -> d * stretchFactor).toArray();
-    }
-
-    private static double max(final double[] a) {
-        double max = Double.NEGATIVE_INFINITY;
-
-        for(final double d : a) {
-            max = Math.max(max, d);
-        }
-
-        return max;
-    }
-
     private static double[][] copyArray(final double[][] a) {
         final double[][] duplicate = new double[a.length][a[0].length]; //todo 0 index?
         for(int i = 0; i < a.length; i++) {
@@ -124,31 +92,5 @@ public class MathFunctions {
         }
 
         return duplicate;
-    }
-
-    public static double[] h(final double[] coordinates) {
-        final double t = t(coordinates);
-        final double sum = Arrays.stream(coordinates).sum();
-        final double t2 = 1.0 / sum; //sum can't be 0 or t would be
-        final double stretchFactor = t2 / t;
-
-        final double[] temp = Arrays.stream(coordinates).map(d -> d * stretchFactor).toArray();
-        final double[] ret = new double[temp.length + 1];
-        System.arraycopy(temp, 0, ret, 0, temp.length);
-        ret[ret.length - 1] = 1 - (stretchFactor * sum);
-
-        return ret;
-    }
-
-    private static double t(double[] a) {
-        //highest coordinate will hit unit cube first
-        final double max = max(a);
-
-        //linear => scalar projection will be same for each coordinate
-        if(max == 0) {
-            return 0.0;
-        } else {
-            return 1.0 / max;
-        }
     }
 }

@@ -20,8 +20,8 @@ public class BaseSimplex implements Simplex{
 
     public static BaseSimplex createSimplex(final PayoffMatrix[] payoffMatrices, final Simplotope simplotope, final int ndim) {
         //give all corners, which will be of the form (0,0,..,1,0,..0)
-        final double[][] points = new double[ndim][ndim];
-        for(int i = 0; i < ndim; i++) {
+        final double[][] points = new double[ndim + 1][ndim + 1];
+        for(int i = 0; i < ndim + 1; i++) {
             points[i][i] = 1;
         }
 
@@ -113,12 +113,11 @@ public class BaseSimplex implements Simplex{
         final Set<Integer> labels = new HashSet<>();
 
         for(final double[] coords : points) {
-            if(labels.add(MathFunctions.labelPoint(coords, simplotope, payoffMatrices))) {
-                final List<double[][]> list = Collections.singletonList(points);
-                return Collections.unmodifiableList(list);
+            if(!labels.add(MathFunctions.labelPoint(coords, simplotope, payoffMatrices))) {
+                return Collections.emptyList();
             }
         }
-
-        return Collections.emptyList();
+        final List<double[][]> list = Collections.singletonList(points);
+        return Collections.unmodifiableList(list);
     }
 }

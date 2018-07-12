@@ -31,7 +31,7 @@ public class Simplotope {
         double tSimplexIntercept = findSimplexIntercept(coordinates);
 
         final double[] moddedSimpletopeCoords;
-        if(tSimplexIntercept == 0d) {
+        if(tSimplexIntercept != 0d) {
             double minTSimplotopeIntercept = findSimplotopeIntercept(coordinates);
 
             //multiply by the magnitude of the vector given when letting t = minTSimplotopeIntercept
@@ -65,18 +65,18 @@ public class Simplotope {
         return nDim;
     }
 
-    //we remove the first coordinate of the simplex to project it down a dimension
+    //we remove the last coordinate of the simplex to project it down a dimension
     //this makes the projected simplex contain the origin
     private double[] toProjectedSimplexCoordinates(final double[] simplexCoordinates) {
         final double[] projectedCoordinates = new double[simplexCoordinates.length - 1];
-        System.arraycopy(simplexCoordinates, 1, projectedCoordinates, 0, projectedCoordinates.length);
+        System.arraycopy(simplexCoordinates, 0, projectedCoordinates, 0, projectedCoordinates.length);
         return projectedCoordinates;
     }
 
     private double[] fromProjectedSimplexCoordinates(final double[] modSimplexCoordinates) {
         final double[] coordinates = new double[modSimplexCoordinates.length + 1];
-        System.arraycopy(modSimplexCoordinates, 0, coordinates, 1, modSimplexCoordinates.length);
-        coordinates[0] = 1d - Arrays.stream(modSimplexCoordinates).sum();
+        System.arraycopy(modSimplexCoordinates, 0, coordinates, 0, modSimplexCoordinates.length);
+        coordinates[coordinates.length - 1] = 1d - Arrays.stream(modSimplexCoordinates).sum();
         return coordinates;
     }
 
@@ -131,20 +131,23 @@ public class Simplotope {
         //this simplotope is the intersection of planes given by similar inequalities 1 = x1 + x2 + ...
         //the edge of the simplotope will be one of these planes- the one
         //that whose t value hits first
-        double minTSimplotopeIntercept = Double.MIN_VALUE;
+        double minTSimplotopeIntercept = Double.MAX_VALUE;
         int numMovesSoFar = 0;
         for (int numMove : numMoves) {
             final int numMoveMinusone = numMove - 1;
             final double[] relatedCoords = new double[numMoveMinusone];
-            System.arraycopy(coordinates, numMovesSoFar, relatedCoords, 0, numMovesSoFar += numMoveMinusone);
-            final double sum = Arrays.stream(coordinates).sum();
+            System.arraycopy(coordinates, numMovesSoFar, relatedCoords, 0, numMoveMinusone);
+            final double sum = Arrays.stream(relatedCoords).sum();
             final double t;
             if(sum == 0d) {
-                t = 0;
+                numMovesSoFar += numMoveMinusone;
+                continue; //todo think about- this shouldn't happen every time
             } else {
                 t = 1d / sum;
             }
             minTSimplotopeIntercept = Math.min(minTSimplotopeIntercept, t);
+
+            numMovesSoFar += numMoveMinusone;
         }
 
         return minTSimplotopeIntercept;
