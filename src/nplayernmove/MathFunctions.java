@@ -9,9 +9,29 @@ import java.util.Arrays;
  */
 public class MathFunctions {
 
-    public static int labelPoint(final double[] point, final PayoffMatrix payoffMatrix) {
-        //todo
-        return -1;
+    public static int labelPoint(final double[] point, final Simplotope strategySpace, final PayoffMatrix[] payoffMatrix) {
+        final double[][] strategies = strategySpace.fromSimplex(point);
+        final double[][] nashResult = nashFxn(strategies, payoffMatrix);
+        final double[] newPoint = strategySpace.fromSimplotope(nashResult);
+        int i = 0;
+        for(; i < point.length; i++) {
+            if(point[i] < newPoint[i]) {
+                return i + 1;
+            }
+        }
+
+        throw new NashFoundException(strategies);
+    }
+
+    public static class NashFoundException extends RuntimeException {
+        private final double[][] strategies;
+        public NashFoundException(final double[][] strategies) {
+            this.strategies = strategies;
+        }
+
+        public double[][] getStrategies() {
+            return strategies;
+        }
     }
 
     public static double expectedPayoff(final double[][] strategies, final PayoffMatrix payoffMatrix){
