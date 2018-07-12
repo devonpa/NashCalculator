@@ -3,7 +3,7 @@ package nplayernmove;
 import java.util.Arrays;
 
 /**
- * Represents the entire strategy space of each player.
+ * Represents the entire strategy space for the game.
  *
  * The constructor takes an int[] with the number of moves per player.
  * The simplotope is the product of each players simplified strategy space (number of moves -1)
@@ -27,6 +27,7 @@ public class Simplotope {
     }
 
     public double[][] fromSimplex(double[] coordinates) {
+        coordinates = toProjectedSimplexCoordinates(coordinates);
         double tSimplexIntercept = findSimplexIntercept(coordinates);
 
         final double[] moddedSimpletopeCoords;
@@ -57,7 +58,7 @@ public class Simplotope {
 
         final double stretchFactor = tSimplexIntercept / minTSimplotopeIntercept;
 
-        return Arrays.stream(coordinates).map(d -> d * stretchFactor).toArray();
+        return fromProjectedSimplexCoordinates(Arrays.stream(coordinates).map(d -> d * stretchFactor).toArray());
     }
 
     public int getnDim() {
@@ -70,6 +71,13 @@ public class Simplotope {
         final double[] projectedCoordinates = new double[simplexCoordinates.length - 1];
         System.arraycopy(simplexCoordinates, 1, projectedCoordinates, 0, projectedCoordinates.length);
         return projectedCoordinates;
+    }
+
+    private double[] fromProjectedSimplexCoordinates(final double[] modSimplexCoordinates) {
+        final double[] coordinates = new double[modSimplexCoordinates.length + 1];
+        System.arraycopy(modSimplexCoordinates, 0, coordinates, 1, modSimplexCoordinates.length);
+        coordinates[0] = 1d - Arrays.stream(modSimplexCoordinates).sum();
+        return coordinates;
     }
 
     //strategies contain all probabilities of all players

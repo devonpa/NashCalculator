@@ -2,11 +2,14 @@ package nplayernmove;
 
 import java.util.List;
 
+/**
+ * Represents one players strategy space.
+ */
 public interface Simplex {
 
     Simplex subdivide();
 
-    List<Object> getCentroid();
+    List<double[]> getCentroid();
 
-    List<double[]> getFullyLabeled();
+    List<double[][]> getFullyLabeled();
 }

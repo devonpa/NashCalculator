@@ -21,15 +21,15 @@ public class SuperSimplex implements Simplex{
     }
 
     @Override
-    public List<Object> getCentroid() {
+    public List<double[]> getCentroid() {
         //todo is this right
         //return simplexes[0].getCentroid();
         throw new IllegalStateException("Can't find centroid of SuperSimplex");
     }
 
     @Override
-    public List<double[]> getFullyLabeled() {
-        final List<double[]> ret = new ArrayList<>();
+    public List<double[][]> getFullyLabeled() {
+        final List<double[][]> ret = new ArrayList<>();
         Arrays.stream(simplexes).forEach(s -> ret.addAll(s.getFullyLabeled()));
         return ret;
     }
