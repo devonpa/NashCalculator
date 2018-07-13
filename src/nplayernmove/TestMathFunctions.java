@@ -14,6 +14,7 @@ public class TestMathFunctions {
         testNashFxn();
         testSimplotope();
         testLabelPoints();
+        testLabelPoints3p2m();
     }
 
     private static void testLabelPoints() {
@@ -43,6 +44,53 @@ public class TestMathFunctions {
         assertEquals(3, MathFunctions.labelPoint(new double[]{0,0.5,0.5}, simplotope, matrices));
 
         assertEquals(3, MathFunctions.labelPoint(new double[]{1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0}, simplotope, matrices));
+    }
+
+    private static void testLabelPoints3p2m() {
+        final Map<int[], Integer> payoffsP1_3 = new HashMap<>();
+        payoffsP1_3.put(new int[]{0,0,0}, 2);
+        payoffsP1_3.put(new int[]{1,0,0}, 2);
+        payoffsP1_3.put(new int[]{0,1,0}, 1);
+        payoffsP1_3.put(new int[]{0,0,1}, 1);
+        payoffsP1_3.put(new int[]{1,1,0}, 2);
+        payoffsP1_3.put(new int[]{1,0,1}, 2);
+        payoffsP1_3.put(new int[]{0,1,1}, 2);
+        payoffsP1_3.put(new int[]{1,1,1}, 1);
+
+        final Map<int[], Integer> payoffsP2_3 = new HashMap<>();
+        payoffsP2_3.put(new int[]{0,0,0}, 1);
+        payoffsP2_3.put(new int[]{1,0,0}, 1);
+        payoffsP2_3.put(new int[]{0,1,0}, 2);
+        payoffsP2_3.put(new int[]{0,0,1}, 2);
+        payoffsP2_3.put(new int[]{1,1,0}, 2);
+        payoffsP2_3.put(new int[]{1,0,1}, 2);
+        payoffsP2_3.put(new int[]{0,1,1}, 2);
+        payoffsP2_3.put(new int[]{1,1,1}, 1);
+
+        final Map<int[], Integer> payoffsP3_3 = new HashMap<>();
+        payoffsP3_3.put(new int[]{0,0,0}, 1);
+        payoffsP3_3.put(new int[]{1,0,0}, 2);
+        payoffsP3_3.put(new int[]{0,1,0}, 2);
+        payoffsP3_3.put(new int[]{0,0,1}, 2);
+        payoffsP3_3.put(new int[]{1,1,0}, 1);
+        payoffsP3_3.put(new int[]{1,0,1}, 1);
+        payoffsP3_3.put(new int[]{0,1,1}, 1);
+        payoffsP3_3.put(new int[]{1,1,1}, 2);
+
+        final PayoffMatrix[] matrices = new PayoffMatrix[]{new PayoffMatrix(payoffsP1_3), new PayoffMatrix(payoffsP2_3), new PayoffMatrix(payoffsP3_3)};
+
+
+        final Simplotope simplotope = new Simplotope(new int[]{2, 2, 2});
+
+        assertEquals(1, MathFunctions.labelPoint(new double[]{1,0,0,0}, simplotope, matrices));
+        assertEquals(2, MathFunctions.labelPoint(new double[]{0,1,0,0}, simplotope, matrices));
+        assertEquals(3, MathFunctions.labelPoint(new double[]{0,0,1,0}, simplotope, matrices));
+
+        assertEquals(1, MathFunctions.labelPoint(new double[]{0.5,0.5,0,0}, simplotope, matrices));
+        assertEquals(1, MathFunctions.labelPoint(new double[]{0.5,0,0.5,0}, simplotope, matrices));
+        assertEquals(2, MathFunctions.labelPoint(new double[]{0,0.5,0.5,0}, simplotope, matrices));
+
+        assertEquals(2, MathFunctions.labelPoint(new double[]{1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 0}, simplotope, matrices));
     }
 
     private static void testExpectedPayoff() {

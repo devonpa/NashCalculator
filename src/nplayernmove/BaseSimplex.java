@@ -52,14 +52,19 @@ public class BaseSimplex implements Simplex{
 
         //the points on the line are the "split", one goes on each side
         final double[][] newCoords = new double[points.length][points[0].length];
-        int j = 0;
+
+        //placing the coordinate at spot 0 means that when we find the centroid of face[0]
+        //it will be the face which does not contain the new point.
+        //Subsequent subdivisions split previously un-split faces, meaning repeated calls
+        //drive the length of each edge to 0
+        newCoords[0] = newPointCoordinates;
+        int j = 1;
         for(final double[] coordsAndLabel : points) {
             if(!Arrays.equals(coordsAndLabel, onLine1) && !Arrays.equals(coordsAndLabel, onLine2)) {
                 newCoords[j++] = coordsAndLabel;
             }
         }
 
-        newCoords[j] = newPointCoordinates;
         newCoords[newCoords.length - 1] = onLine1;
         final Simplex left = new BaseSimplex(payoffMatrices, simplotope, newCoords).subdivide(i - 1);
 
