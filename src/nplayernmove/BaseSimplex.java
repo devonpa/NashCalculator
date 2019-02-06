@@ -10,6 +10,11 @@ public class BaseSimplex implements Simplex{
 
     private final double[][] points;
     private final PayoffMatrix[] payoffMatrices;
+
+    public Simplotope getSimplotope() {
+        return simplotope;
+    }
+
     private final Simplotope simplotope;
 
     public BaseSimplex(final PayoffMatrix[] payoffMatrices, final Simplotope simplotope, final double[]... points) {
