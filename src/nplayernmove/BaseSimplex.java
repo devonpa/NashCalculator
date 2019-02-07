@@ -111,11 +111,26 @@ public class BaseSimplex implements Simplex{
         if(points.length == 2) {
             final double[] coordinates0 = points[0];
             final double[] coordinates1 = points[1];
-            final double[] newPointCoordinates = new double[]{(coordinates0[0] + coordinates1[0]) / 2d, (coordinates0[1] + coordinates1[1]) / 2d};
+
+            final double[] newPointCoordinates = averagePoints(coordinates0, coordinates1);
             return Arrays.asList(newPointCoordinates, points[0], points[1]);
         }
 
         return makeFaces()[0].getCentroid();
+    }
+
+    private double[] averagePoints(double[] coordinates0, double[] coordinates1) {
+        if(coordinates0.length != coordinates1.length) {
+            throw new IllegalStateException(Arrays.toString(coordinates0) + " " + Arrays.toString(coordinates1));
+        }
+
+        final double[] avg = new double[coordinates0.length];
+
+        for(int i = 0; i < coordinates0.length; i++) {
+            avg[i] = (coordinates0[i] + coordinates1[i]) / ((double) coordinates0.length);
+        }
+
+        return avg;
     }
 
     @Override
