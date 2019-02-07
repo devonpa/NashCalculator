@@ -112,8 +112,8 @@ public class Benchmark {
     }
 
     public static void main(String[] args) {
-        final int iterations = 5;
-        Simplex simplex = constructProblem6();
+        final int iterations = 1;
+        Simplex simplex = constructProblem4();
         final Simplotope simplotope = ((BaseSimplex) simplex).getSimplotope();
 
         for(int i = 0; i < iterations; i++) {
